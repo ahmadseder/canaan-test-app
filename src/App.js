@@ -1,37 +1,17 @@
+import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
-import Rules from "./Demo.json";
+import { Grid, Typography } from "@mui/material";
+import "./App.css";
 import Entries from "./Entries";
 import AppBar from "./AppBar";
-import "./services";
-
-import "./App.css";
-import {
-  startDevTools,
-  initializeRulesEngine,
-} from "@canaan_run/canaan";
-import { useEffect, useState } from "react";
-import {
-  initializeProjects,
-  selectProject,
-  projectsApp,
-  getSelectedProject,
-  addEntry,
-  initUser,
-  getBalance,
-  getUserInfo,
-  getProjects
-} from "./CQRS";
-
-import { Grid, Typography } from "@mui/material";
 import { generateUserInfo, generatePorjectsData } from "./utils";
-
-
-
 
 function App() {
   const [selectedProject, setSelectedProject] = useState();
+  const [user, setUser] = useState({});
+  const [projects, setProjects ] = useState([]); 
   const [balance, setBalance] = useState(0); 
   const [data, setData] = useState({
     number: "",
@@ -40,21 +20,10 @@ function App() {
   });
 
   useEffect(() => {
-    startDevTools();
-    
-    initializeRulesEngine(Rules);
-    initUser(generateUserInfo());
-    initializeProjects(generatePorjectsData());
-
-    projectsApp.subscribe(getSelectedProject, (current, previous) => {
-      setSelectedProject(current);
-    });
-
-    projectsApp.subscribe(getBalance, (current, previous) => {
-      setBalance(current); 
-    });
+    setProjects(generatePorjectsData());
+    setUser(generateUserInfo());
   }, []);
-  const {name, subscriptionType} = getUserInfo(); 
+  const {name, subscriptionType} = user; 
   return (
     <>
       <AppBar name={name} plan={subscriptionType} />
@@ -71,7 +40,7 @@ function App() {
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
-                  options={getProjects()}
+                  options={projects}
                   blurOnSelect
                   value={data?.id}
                   sx={{ width: "100%" }}
@@ -79,7 +48,7 @@ function App() {
                     <TextField {...params} label="Project Name" />
                   )}
                   onChange={(event, value) => {
-                    selectProject(value);
+                    setSelectedProject(value);
                     setData({
                       ...data,
                       project: value?.id,
@@ -136,10 +105,6 @@ function App() {
                         alert("Please enter a number ")
                         return; 
                       }
-                      addEntry({
-                        ...data,
-                        ...selectedProject,
-                      });
                     }}
                   >
                     Save

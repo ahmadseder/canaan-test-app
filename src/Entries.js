@@ -6,17 +6,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { projectsApp, getEntries } from './CQRS';
 
 
-export default function DenseTable() {
-    const [rows, setRows] = React.useState([]); 
+export default function DenseTable({entries}) {
+    const [rows, setRows] = React.useState(entries); 
 
-    React.useEffect(()=>{
-        projectsApp.subscribe(getEntries, (current)=>{
-            setRows(current); 
-        });
-    },[]);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
