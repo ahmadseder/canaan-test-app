@@ -1,0 +1,57 @@
+{
+	"name": "Demo",
+	"attributes": [
+		{
+			"name": "data",
+			"type": "object"
+		},
+		{
+			"name": "context",
+			"type": "object"
+		},
+		{
+			"name": "user.data.info.subscriptionType",
+			"type": "string"
+		},
+		{
+			"name": "type",
+			"type": "string"
+		},
+		{
+			"name": "CanaanApp.data.commandCounter.projects-addEntry.count",
+			"type": "number"
+		}
+	],
+	"decisions": [
+		{
+			"conditions": {
+				"all": [
+					{
+						"fact": "data",
+						"operator": "equal",
+						"value": "Free",
+						"path": ".user.data.info.subscriptionType"
+					},
+					{
+						"fact": "context",
+						"operator": "equal",
+						"value": "addEntry",
+						"path": ".type"
+					},
+					{
+						"fact": "data",
+						"operator": "greaterThanInclusive",
+						"value": "3",
+						"path": ".CanaanApp.data.commandCounter.projects-addEntry.count"
+					}
+				]
+			},
+			"event": {
+				"type": "FreeSubscriptionLimitExceeded",
+				"params": {
+					"message": "You are on a free plan You can't add on more than 3 logs per visit, Upgrade your plan to add more"
+				}
+			}
+		}
+	]
+}
