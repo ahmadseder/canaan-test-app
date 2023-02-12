@@ -47,3 +47,27 @@ export const generatePorjectsData = () => {
   }
   return output; 
 };
+export const getCalculatedBalance = ({balance, isVolunteering, number, calculationType}) => {
+    const currentBalance = balance || 0;
+    if(isVolunteering === 'true'){
+        return currentBalance; 
+    }else{
+        let payment = 0; 
+        switch(calculationType){
+            case 'hour':{
+                payment = number * 100; 
+                break; 
+            }
+            case 'task':{
+                payment = number * 10; 
+                break; 
+            }
+            case 'storyPoint':{
+                payment = number * 23; 
+                break; 
+            }
+        }
+        return payment + currentBalance;
+    }
+
+}
