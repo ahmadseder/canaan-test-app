@@ -9,8 +9,7 @@ import Paper from '@mui/material/Paper';
 
 
 export default function DenseTable({entries}) {
-    const [rows, setRows] = React.useState(entries); 
-
+console.log(entries);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -24,9 +23,8 @@ export default function DenseTable({entries}) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows?.map((row) => (
+          {entries?.map((row) => (
             <TableRow
-              key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">

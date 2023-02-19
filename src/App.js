@@ -7,11 +7,17 @@ import "./App.css";
 import Entries from "./Entries";
 import AppBar from "./AppBar";
 import { generateUserInfo, generatePorjectsData } from "./utils";
+import { updateUserInfo, updateProjects, getProjects, projects as projectsDomain, user as userDomain, getUserInfo, getBalance, addEntry, getEntries} from './CQRS';
+import "./services";
+import rules from './Demo.json';
+
+import { initializeRulesEngine, startDevTools } from "@canaan_run/canaan";
 
 function App() {
   const [selectedProject, setSelectedProject] = useState();
   const [user, setUser] = useState({});
   const [projects, setProjects ] = useState([]); 
+  const [entries,setEntries] = useState([]);
   const [balance, setBalance] = useState(0); 
   const [data, setData] = useState({
     number: "",
@@ -20,8 +26,15 @@ function App() {
   });
 
   useEffect(() => {
-    setProjects(generatePorjectsData());
-    setUser(generateUserInfo());
+    startDevTools();
+    initializeRulesEngine(rules);
+    updateProjects(generatePorjectsData());
+    updateUserInfo(generateUserInfo());
+    projectsDomain.subscribe(getProjects, setProjects);
+    userDomain.subscribe(getUserInfo, setUser);
+    projectsDomain.subscribe(getBalance, setBalance);
+    projectsDomain.subscribe(getEntries,setEntries);
+    
   }, []);
   const {name, subscriptionType} = user; 
   return (
@@ -100,6 +113,13 @@ function App() {
                   <Button
                     variant="contained"
                     onClick={() => {
+                      addEntry({
+                        label: selectedProject.label,
+                        number: data.number, 
+                        details: data.details,
+                        isVolunteering: selectedProject.isVolunteering,
+                        type: selectedProject.calculationType,
+                      });
                       if(!data?.number)
                       {
                         alert("Please enter a number ")
@@ -122,7 +142,7 @@ function App() {
                   <Typography variant="h4">Balance: ${balance}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Entries />
+                <Entries entries={entries} />
               </Grid>
             </Grid>
           </Grid>
